@@ -1,14 +1,10 @@
-# Deny direct browser access to the SQLite database file
-<Files "*.sqlite">
-    Order allow,deny
-    Deny from all
+# Block direct browser access to the SQLite database
+<Files "transfers.sqlite">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </Files>
-
-# Deny access to PHP config/logic files that should only be included, not called directly
-<FilesMatch "^(config|excel)\.php$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Optional: set default charset
-AddDefaultCharset UTF-8

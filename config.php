@@ -48,7 +48,7 @@ function _init_db(PDO $db): void
     ');
 }
 
-function redirect(string $url): never
+function redirect(string $url): void
 {
     header('Location: ' . $url);
     exit;

@@ -151,12 +151,11 @@
 <?php if (!empty($flash)): ?>
 <div class="flash-wrap">
   <?php
-    $icon = match($flash['type']) {
-        'success' => 'check-circle-fill',
-        'warning' => 'exclamation-triangle-fill',
-        'danger'  => 'x-circle-fill',
-        default   => 'info-circle-fill',
-    };
+    $t = $flash['type'];
+    if ($t === 'success')      $icon = 'check-circle-fill';
+    elseif ($t === 'warning')  $icon = 'exclamation-triangle-fill';
+    elseif ($t === 'danger')   $icon = 'x-circle-fill';
+    else                       $icon = 'info-circle-fill';
   ?>
   <div class="alert alert-<?= h($flash['type']) ?> alert-dismissible fade show shadow-lg" role="alert">
     <i class="bi bi-<?= $icon ?> me-2"></i><?= h($flash['message']) ?>

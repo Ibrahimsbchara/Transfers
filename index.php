@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $id = (int)$db->lastInsertId();
                 set_flash("Batch \"$name\" created.", 'success');
                 redirect("index.php?action=view&id=$id");
-            } catch (\PDOException) {
+            } catch (\PDOException $e) {
                 set_flash("A batch named \"$name\" already exists.", 'danger');
                 redirect('index.php');
             }

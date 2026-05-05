@@ -1,0 +1,14 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=$HOME/public_html/transfers
+    - /bin/mkdir -p $DEPLOYPATH/views
+    - /bin/cp index.php $DEPLOYPATH/
+    - /bin/cp config.php $DEPLOYPATH/
+    - /bin/cp excel.php $DEPLOYPATH/
+    - /bin/cp .htaccess $DEPLOYPATH/
+    - /bin/cp views/*.php $DEPLOYPATH/views/
+    - /bin/chmod 644 $DEPLOYPATH/*.php
+    - /bin/chmod 644 $DEPLOYPATH/views/*.php
+    - /bin/chmod 755 $DEPLOYPATH
+    - /bin/chmod 755 $DEPLOYPATH/views

@@ -16,7 +16,7 @@
       <i class="bi bi-plus-circle me-2"></i>Add Transfer
     </button>
     <a href="index.php?action=export&id=<?= (int)$date['id'] ?>"
-       class="btn btn-success">
+       class="btn btn-success" id="exportBtn" onclick="startExport(this)">
       <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
     </a>
   </div>
@@ -201,6 +201,15 @@
 <!-- ── JavaScript ──────────────────────────────────────────────────── -->
 <?php ob_start(); ?>
 <script>
+function startExport(btn) {
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Generating…';
+  btn.classList.add('disabled');
+  setTimeout(function() {
+    btn.innerHTML = '<i class="bi bi-file-earmark-excel me-2"></i>Export Excel';
+    btn.classList.remove('disabled');
+  }, 6000);
+}
+
 function autofillBank(el) {
   var banks = JSON.parse(document.getElementById('banks-json').textContent);
   var val   = el.value.trim().toLowerCase();

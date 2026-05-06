@@ -77,6 +77,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ordStmt = $db->prepare('SELECT COALESCE(MAX(sort_order),0) FROM transfers WHERE date_id=?');
             $ordStmt->execute([$dateId]);
             $maxOrd  = (int)$ordStmt->fetchColumn();
+            $vessel   = post_upper('vessel');
+            $bankName = post('bank_name');
+            $swift    = strtoupper(post('swift_code'));
+            $branch   = post('branch');
             $db->prepare('
                 INSERT INTO transfers
                     (date_id,vessel,sender_name,receiver_name,amount,
@@ -85,19 +89,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             ')->execute([
                 $dateId,
-                post_upper('vessel'), post_upper('sender_name'), post_upper('receiver_name'),
+                $vessel, post_upper('sender_name'), post_upper('receiver_name'),
                 post_float('amount'),
-                post('bank_name'), post('account_number'),
-                strtoupper(post('iban')), strtoupper(post('swift_code')),
-                post('branch'), post('mobile_number'), post('cid'),
+                $bankName, post('account_number'),
+                strtoupper(post('iban')), $swift,
+                $branch, post('mobile_number'), post('cid'),
                 post_upper('place_of_delivery'), $maxOrd + 1,
             ]);
+            // Auto-save vessel and bank to settings if new
+            if ($vessel !== '') {
+                $db->prepare('INSERT OR IGNORE INTO vessels (name) VALUES (?)')->execute([$vessel]);
+            }
+            if ($bankName !== '') {
+                $chk = $db->prepare('SELECT id FROM banks WHERE name=?');
+                $chk->execute([$bankName]);
+                if (!$chk->fetch()) {
+                    $db->prepare('INSERT INTO banks (name,branch,swift_code) VALUES (?,?,?)')->execute([$bankName, $branch, $swift]);
+                }
+            }
             set_flash('Transfer added.', 'success');
             redirect("index.php?action=view&id=$dateId");
 
         case 'edit_transfer':
-            $id     = post_int('id');
-            $dateId = post_int('date_id');
+            $id       = post_int('id');
+            $dateId   = post_int('date_id');
+            $vessel   = post_upper('vessel');
+            $bankName = post('bank_name');
+            $swift    = strtoupper(post('swift_code'));
+            $branch   = post('branch');
             $db->prepare('
                 UPDATE transfers SET
                     vessel=?,sender_name=?,receiver_name=?,amount=?,
@@ -105,13 +124,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     branch=?,mobile_number=?,cid=?,place_of_delivery=?
                 WHERE id=? AND date_id=?
             ')->execute([
-                post_upper('vessel'), post_upper('sender_name'), post_upper('receiver_name'),
+                $vessel, post_upper('sender_name'), post_upper('receiver_name'),
                 post_float('amount'),
-                post('bank_name'), post('account_number'),
-                strtoupper(post('iban')), strtoupper(post('swift_code')),
-                post('branch'), post('mobile_number'), post('cid'),
+                $bankName, post('account_number'),
+                strtoupper(post('iban')), $swift,
+                $branch, post('mobile_number'), post('cid'),
                 post_upper('place_of_delivery'), $id, $dateId,
             ]);
+            // Auto-save vessel and bank to settings if new
+            if ($vessel !== '') {
+                $db->prepare('INSERT OR IGNORE INTO vessels (name) VALUES (?)')->execute([$vessel]);
+            }
+            if ($bankName !== '') {
+                $chk = $db->prepare('SELECT id FROM banks WHERE name=?');
+                $chk->execute([$bankName]);
+                if (!$chk->fetch()) {
+                    $db->prepare('INSERT INTO banks (name,branch,swift_code) VALUES (?,?,?)')->execute([$bankName, $branch, $swift]);
+                }
+            }
             set_flash('Transfer updated.', 'success');
             redirect("index.php?action=view&id=$dateId");
 

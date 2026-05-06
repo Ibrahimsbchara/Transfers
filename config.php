@@ -46,6 +46,22 @@ function _init_db(PDO $db): void
             FOREIGN KEY (date_id) REFERENCES transfer_dates(id) ON DELETE CASCADE
         )
     ');
+
+    $db->exec('
+        CREATE TABLE IF NOT EXISTS vessels (
+            id   INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE
+        )
+    ');
+
+    $db->exec('
+        CREATE TABLE IF NOT EXISTS banks (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            name       TEXT NOT NULL,
+            branch     TEXT NOT NULL DEFAULT "",
+            swift_code TEXT NOT NULL DEFAULT ""
+        )
+    ');
 }
 
 function redirect(string $url): void

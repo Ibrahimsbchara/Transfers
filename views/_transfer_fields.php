@@ -1,22 +1,21 @@
-<!-- Shared form fields — included in both Add and Edit modals.
-     Uses only `name` attributes (no IDs) so duplicate inclusion is safe.
-     The Edit modal's JS populates values via form.elements[name].        -->
+<!-- Shared form fields — included in Add and Edit modals in date.php.
+     Datalists (#vessel-list, #bank-list) and #banks-json are injected
+     once by date.php and shared between both modal instances.          -->
 <div class="row g-3">
 
-  <!-- Vessel + Amount on same row -->
+  <!-- Vessel (live search) + Amount -->
   <div class="col-md-7">
     <label class="form-label fw-semibold">
       Vessel <span class="text-danger">*</span>
     </label>
     <input type="text" name="vessel" class="form-control"
-           placeholder="e.g.  AK HAMZA">
+           placeholder="Type to search vessels…"
+           list="vessel-list" autocomplete="off">
   </div>
   <div class="col-md-5">
     <label class="form-label fw-semibold">Amount</label>
-    <div class="input-group">
-      <input type="number" name="amount" class="form-control"
-             placeholder="0.00" step="0.01" min="0" value="0">
-    </div>
+    <input type="number" name="amount" class="form-control"
+           placeholder="0.00" step="0.01" min="0" value="0">
   </div>
 
   <!-- Sender -->
@@ -33,18 +32,23 @@
            placeholder="Full name of the receiver">
   </div>
 
-  <!-- Bank section divider -->
+  <!-- Bank section -->
   <div class="col-12 mt-2">
     <p class="form-section-title">
       <i class="bi bi-bank me-1"></i>Bank Details
     </p>
   </div>
 
-  <!-- Bank Name -->
+  <!-- Bank name (live search — auto-fills SWIFT + Branch) -->
   <div class="col-12">
     <label class="form-label fw-semibold">Bank Name</label>
     <input type="text" name="bank_name" class="form-control"
-           placeholder="e.g.  Banque Misr  /  البنك الأهلي المصري">
+           placeholder="Type to search banks…"
+           list="bank-list" autocomplete="off"
+           oninput="autofillBank(this)">
+    <div class="form-text">
+      <i class="bi bi-magic me-1"></i>Selecting a saved bank auto-fills SWIFT &amp; Branch below.
+    </div>
   </div>
 
   <!-- Account Number + IBAN -->
@@ -56,14 +60,14 @@
   <div class="col-md-6">
     <label class="form-label fw-semibold">IBAN</label>
     <input type="text" name="iban" class="form-control"
-           placeholder="e.g.  EG580037…">
+           placeholder="e.g. EG580037…">
   </div>
 
-  <!-- SWIFT + Branch -->
+  <!-- SWIFT + Branch (auto-filled when bank selected) -->
   <div class="col-md-6">
     <label class="form-label fw-semibold">SWIFT Code</label>
     <input type="text" name="swift_code" class="form-control"
-           placeholder="e.g.  NBEGEGCX">
+           placeholder="e.g. NBEGEGCX">
   </div>
   <div class="col-md-6">
     <label class="form-label fw-semibold">Branch</label>
@@ -75,7 +79,7 @@
   <div class="col-md-6">
     <label class="form-label fw-semibold">Mobile Number</label>
     <input type="text" name="mobile_number" class="form-control"
-           placeholder="e.g.  00201023333241">
+           placeholder="e.g. 00201023333241">
   </div>
   <div class="col-md-6">
     <label class="form-label fw-semibold">CID</label>
@@ -87,7 +91,7 @@
   <div class="col-12">
     <label class="form-label fw-semibold">Place of Delivery</label>
     <input type="text" name="place_of_delivery" class="form-control"
-           placeholder="e.g.  CAIRO">
+           placeholder="e.g. CAIRO">
   </div>
 
 </div>

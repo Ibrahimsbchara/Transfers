@@ -139,9 +139,12 @@
 <body>
 
 <nav class="navbar navbar-main py-2">
-  <div class="container-xl">
+  <div class="container-xl d-flex align-items-center justify-content-between">
     <a href="index.php" class="navbar-brand-text d-flex align-items-center gap-2">
       <i class="bi bi-send-fill"></i> Egyptian Transfers Management
+    </a>
+    <a href="index.php?action=settings" class="text-white text-decoration-none small opacity-75 d-flex align-items-center gap-1">
+      <i class="bi bi-gear-fill"></i> Settings
     </a>
   </div>
 </nav>

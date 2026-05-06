@@ -182,23 +182,48 @@
 </div>
 
 
+<!-- ── Shared datalists (used by both Add and Edit modals) ──────────── -->
+<datalist id="vessel-list">
+  <?php foreach ($vessels as $v): ?>
+  <option value="<?= h($v) ?>">
+  <?php endforeach; ?>
+</datalist>
+
+<datalist id="bank-list">
+  <?php foreach ($banks as $b): ?>
+  <option value="<?= h($b['name']) ?>">
+  <?php endforeach; ?>
+</datalist>
+
+<!-- Banks JSON for autofill -->
+<script type="application/json" id="banks-json"><?= json_encode($banks, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
+
 <!-- ── JavaScript ──────────────────────────────────────────────────── -->
 <?php ob_start(); ?>
 <script>
+function autofillBank(el) {
+  var banks = JSON.parse(document.getElementById('banks-json').textContent);
+  var val   = el.value.trim().toLowerCase();
+  var match = banks.find(function(b) { return b.name.toLowerCase() === val; });
+  if (match) {
+    var form = el.closest('form');
+    if (match.swift_code) form.elements['swift_code'].value = match.swift_code;
+    if (match.branch)     form.elements['branch'].value     = match.branch;
+  }
+}
+
 function openEdit(t) {
-  // Set the hidden transfer ID
   document.getElementById('editId').value = t.id;
 
-  // Field names to populate (match HTML name attributes in _transfer_fields.php)
-  const fields = [
+  var fields = [
     'vessel', 'sender_name', 'receiver_name', 'amount',
     'bank_name', 'account_number', 'iban', 'swift_code',
     'branch', 'mobile_number', 'cid', 'place_of_delivery'
   ];
 
-  const form = document.getElementById('editForm');
+  var form = document.getElementById('editForm');
   fields.forEach(function(name) {
-    const el = form.elements[name];
+    var el = form.elements[name];
     if (el) el.value = (t[name] !== null && t[name] !== undefined) ? t[name] : '';
   });
 

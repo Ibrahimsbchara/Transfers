@@ -291,12 +291,20 @@ class XLSXWriter
         $xml  = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' . "\n";
         $xml .= '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' . "\n";
 
+        // sheetViews MUST appear before cols and sheetData per OOXML spec
+        $xml .= '  <sheetViews>'
+              . '<sheetView workbookViewId="0">'
+              . '<pane ySplit="2" topLeftCell="A3" activePane="bottomLeft" state="frozen"/>'
+              . '</sheetView>'
+              . '</sheetViews>' . "\n";
+
         // Column widths
         if (!empty($this->colWidths)) {
             ksort($this->colWidths);
             $xml .= '  <cols>' . "\n";
             foreach ($this->colWidths as $col => $w) {
-                $xml .= '    <col min="' . $col . '" max="' . $col . '" width="' . $w . '" customWidth="1"/>' . "\n";
+                $xml .= '    <col min="' . $col . '" max="' . $col
+                      . '" width="' . $w . '" customWidth="1"/>' . "\n";
             }
             $xml .= '  </cols>' . "\n";
         }
@@ -323,10 +331,7 @@ class XLSXWriter
         }
         $xml .= '  </sheetData>' . "\n";
 
-        // Freeze top rows
-        $xml .= '  <sheetViews><sheetView workbookViewId="0"><pane ySplit="2" topLeftCell="A3" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' . "\n";
-
-        // Merge cells
+        // mergeCells must appear after sheetData
         if (!empty($this->merges)) {
             $xml .= '  <mergeCells count="' . count($this->merges) . '">' . "\n";
             foreach ($this->merges as [$r1, $c1, $r2, $c2]) {
